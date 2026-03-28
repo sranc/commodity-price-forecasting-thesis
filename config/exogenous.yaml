@@ -1,0 +1,25 @@
+dates:
+  start_date: "2015-07-01"
+  end_date: ""
+
+market:
+  - name: "crude_oil"
+    ticker: "CL=F"
+  - name: "dxy"
+    ticker: "DX=F"
+
+macro:
+  - name: "us_oecd_cli"
+    ticker: "FRED:USALOLITONOSTSAM"
+  - name: "us_inflation"
+    ticker: "FRED:CPIAUCSL"
+  - name: "us_industrial_production"
+    ticker: "FRED:INDPRO"
+  - name: "china_oecd_cli"
+    ticker: "FRED:CHNLOLITOAASTSAM"
+  - name: "china_inflation"
+    ticker: "FRED:CHNCPIALLMINMEI"
+  - name: "china_industrial_production"
+    ticker: "FRED:CHNPRINTO01IXPYM"
+
+alternative: []

@@ -1,0 +1,12 @@
+data:
+  raw_targets: "data/raw/targets"
+  raw_exogenous: "data/raw/exogenous"
+  processed: "data/processed"
+  interim: "data/interim"
+  external: "data/external"
+
+models:
+  statistical: "models/statistical"
+  deep_learning: "models/lstm"
+
+reports: "reports"

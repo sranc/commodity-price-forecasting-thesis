@@ -1,0 +1,21 @@
+---
+title: "Commodity Price Forecasting Thesis"
+author: "Your Name"
+format: pdf
+---
+
+# Introduction
+
+This thesis explores the forecasting of commodity prices using statistical and deep learning methods.
+
+# Methodology
+
+We compare ARIMA and LSTM models.
+
+# Results
+
+(Results will be inserted here)
+
+# Conclusion
+
+(Conclusions)

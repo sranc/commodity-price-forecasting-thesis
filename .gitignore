@@ -1,0 +1,39 @@
+# Data Science & Project Specific
+data/raw/
+data/external/
+data/interim/
+data/processed/
+*.csv
+*.xlsx
+*.json
+*.parquet
+*.h5
+*.pkl
+*.rds
+*.RData
+
+# Models & Logs
+models/*
+!models/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Environments
+env/
+.venv/
+renv/
+.Rproj.user
+__pycache__/
+*.pyc
+.env
+
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Reports generated
+reports/thesis.html
+reports/thesis.pdf
+reports/thesis.docx

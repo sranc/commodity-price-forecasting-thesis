@@ -1,0 +1,13 @@
+dates:
+  start_date: "2015-07-01"
+  end_date: "" # Leave blank to fetch up to the most recent day
+
+metals:
+  - name: "gold"
+    ticker: "GC=F"
+  - name: "silver"
+    ticker: "SI=F"
+  - name: "copper"
+    ticker: "HG=F"
+  - name: "zinc"
+    ticker: "ZNC=F"

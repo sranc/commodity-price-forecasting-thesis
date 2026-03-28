@@ -1,0 +1,11 @@
+lstm:
+  sequence_length: 60
+  units: 50
+  dropout: 0.2
+  epochs: 50
+  batch_size: 32
+
+arima:
+  auto: true
+  test: "kpss"
+  seasonal: false
