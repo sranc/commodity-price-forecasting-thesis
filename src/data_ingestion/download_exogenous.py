@@ -58,14 +58,7 @@ def execute_fred_download(ticker: str, start_date: str, end_date: str = None) ->
     # Recortar al start_date oficial
     df = df.loc[start_date:]
 
-    # Adaptarlo al formato de OHLCV requerido para consistencia tabular
-    df['Open'] = df['Value']
-    df['High'] = df['Value']
-    df['Low'] = df['Value']
-    df['Close'] = df['Value']
-    df['Volume'] = 0  
-    
-    return df[['Open', 'High', 'Low', 'Close', 'Volume']]
+    return df[['Value']]
 
 def download_exogenous_factor(name: str, ticker: str, output_dir: Path, start_date: str, end_date: str = None) -> None:
     """Enruta y descarga datos crudos usando API mappings."""
@@ -76,19 +69,21 @@ def download_exogenous_factor(name: str, ticker: str, output_dir: Path, start_da
         if ticker.startswith("FRED:"):
             real_ticker = ticker.split("FRED:")[1]
             df = execute_fred_download(real_ticker, start_date, end_date)
-            # Para metadata, guardamos el original sin cambios de nombre de columna, pero OHLCV para compatibilidad
+            # Renombrar 'Value' al nombre exacto de la variable macro
+            df.rename(columns={'Value': name}, inplace=True)
         else:
             df = execute_yfinance_download(ticker, start_date, end_date)
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = df.columns.get_level_values(0)
+            
+            # Filtrar a OHLCV solo si es data de mercado financiero
+            required_cols = ["Open", "High", "Low", "Close", "Volume"]
+            available_cols = [col for col in required_cols if col in df.columns]
+            df = df[available_cols]
 
         if df.empty:
             logging.warning(f"No hay datos disponibles para {name} ({ticker})")
             return
-
-        required_cols = ["Open", "High", "Low", "Close", "Volume"]
-        available_cols = [col for col in required_cols if col in df.columns]
-        df = df[available_cols]
 
         output_file = output_dir / f"{name}.csv"
         df.to_csv(output_file)
