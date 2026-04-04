@@ -6,7 +6,7 @@ market:
   - name: "crude_oil"
     ticker: "CL=F"
   - name: "dxy"
-    ticker: "DX=F"
+    ticker: "DX=F, DX-Y.NYB"
 
 macro:
   - name: "us_oecd_cli"

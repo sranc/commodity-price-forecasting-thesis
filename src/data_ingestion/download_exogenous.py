@@ -61,36 +61,48 @@ def execute_fred_download(ticker: str, start_date: str, end_date: str = None) ->
     return df[['Value']]
 
 def download_exogenous_factor(name: str, ticker: str, output_dir: Path, start_date: str, end_date: str = None) -> None:
-    """Enruta y descarga datos crudos usando API mappings."""
+    """Enruta y descarga datos crudos usando API mappings. Soporta múltiples tickers separados por coma como fallback."""
     logging.info(f"Descargando {name} ({ticker}) desde {start_date}...")
     
-    try:
-        # Enrutador de APIs
-        if ticker.startswith("FRED:"):
-            real_ticker = ticker.split("FRED:")[1]
-            df = execute_fred_download(real_ticker, start_date, end_date)
-            # Renombrar 'Value' al nombre exacto de la variable macro
-            df.rename(columns={'Value': name}, inplace=True)
-        else:
-            df = execute_yfinance_download(ticker, start_date, end_date)
-            if isinstance(df.columns, pd.MultiIndex):
-                df.columns = df.columns.get_level_values(0)
-            
-            # Filtrar a OHLCV solo si es data de mercado financiero
-            required_cols = ["Open", "High", "Low", "Close", "Volume"]
-            available_cols = [col for col in required_cols if col in df.columns]
-            df = df[available_cols]
+    tickers_to_try = [t.strip() for t in ticker.split(',')]
+    df = pd.DataFrame()
+    successful_ticker = ""
+    
+    for t in tickers_to_try:
+        try:
+            # Enrutador de APIs
+            if t.startswith("FRED:"):
+                real_ticker = t.split("FRED:")[1]
+                df = execute_fred_download(real_ticker, start_date, end_date)
+                if not df.empty:
+                    df.rename(columns={'Value': name}, inplace=True)
+            else:
+                df = execute_yfinance_download(t, start_date, end_date)
+                if not df.empty:
+                    if isinstance(df.columns, pd.MultiIndex):
+                        df.columns = df.columns.get_level_values(0)
+                    
+                    required_cols = ["Open", "High", "Low", "Close", "Volume"]
+                    available_cols = [col for col in required_cols if col in df.columns]
+                    df = df[available_cols]
 
-        if df.empty:
-            logging.warning(f"No hay datos disponibles para {name} ({ticker})")
-            return
+            if not df.empty:
+                successful_ticker = t
+                break
+            else:
+                logging.warning(f"No hay datos para {name} con el ticker {t}")
 
-        output_file = output_dir / f"{name}.csv"
-        df.to_csv(output_file)
-        logging.info(f"✅ Guardado con éxito → {output_file}")
+        except Exception as e:
+            logging.warning(f"Error descargando {name} con el ticker {t}: {str(e)}")
+            continue
 
-    except Exception as e:
-        logging.error(f"❌ Falló la descarga para {name} tras varios intentos: {str(e)}")
+    if df.empty:
+        logging.error(f"❌ Fracasaron todos los intentos de descarga para {name}. Tickers: {ticker}")
+        return
+
+    output_file = output_dir / f"{name}.csv"
+    df.to_csv(output_file)
+    logging.info(f"✅ Guardado con éxito → {output_file} (usando {successful_ticker})")
 
 def main() -> None:
     # 1. Leer Configuración 
